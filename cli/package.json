@@ -1,6 +1,6 @@
 {
   "name": "@busyburger/p3k",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI для локального окружения: dev поднимает проект, doctor объясняет, почему он не поднялся",
   "type": "module",
   "bin": {
