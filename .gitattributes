@@ -1,0 +1,5 @@
+# В репозитории храним LF: сборка идёт на Linux, macOS и Windows.
+* text=auto eol=lf
+
+# Локфайлы и артефакты диффить построчно смысла нет.
+package-lock.json linguist-generated=true

@@ -1,0 +1,39 @@
+{
+  "processes": {
+    "web": {
+      "command": "npm run dev",
+      "ready": {
+        "log": "ready in"
+      }
+    }
+  },
+  "checks": {
+    "types": {
+      "command": "npx vue-tsc --noEmit",
+      "inputs": [
+        "src",
+        "tsconfig.json",
+        "package.json"
+      ]
+    },
+    "build": {
+      "command": "npx vite build",
+      "inputs": [
+        "src",
+        "index.html",
+        "vite.config.ts",
+        "package.json"
+      ]
+    },
+    "bundle": {
+      "size": {
+        "path": "dist/assets",
+        "max": "60kb",
+        "gzip": true
+      },
+      "needs": [
+        "build"
+      ]
+    }
+  }
+}

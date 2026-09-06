@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  cli:
+    name: CLI · ${{ matrix.os }} · Node ${{ matrix.node }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Три ОС нужны не для галочки: определение владельца порта в doctor
+        # разное на Windows (netstat) и на Unix (lsof, с откатом на ss).
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 20, 22]
+    defaults:
+      run:
+        working-directory: cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      # Дым: команды должны хотя бы запускаться на каждой платформе.
+      - run: node dist/cli.js --help
+      - run: node dist/cli.js init smoke --template static --no-git
+      - run: node dist/cli.js check smoke --list
+      - run: node dist/cli.js doctor smoke
+
+  site:
+    name: Сайт
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx vue-tsc --noEmit
+      - run: npx vite build

@@ -1,0 +1,19 @@
+# зависимости и сборки
+node_modules/
+dist/
+.test-build/
+*.tgz
+
+# кэш проверок p3k и сборщиков
+.cache/
+.p3k/
+node_modules/.cache/
+
+# локальное окружение
+.env
+.env.local
+*.local
+
+# служебное
+.DS_Store
+Thumbs.db

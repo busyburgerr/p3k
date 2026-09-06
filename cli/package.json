@@ -1,0 +1,51 @@
+{
+  "name": "@busyburger/p3k",
+  "version": "0.1.0",
+  "description": "CLI для локального окружения: dev поднимает проект, doctor объясняет, почему он не поднялся",
+  "type": "module",
+  "bin": {
+    "p3k": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "tsc -p tsconfig.test.json && cd .test-build && node --test",
+    "start": "node dist/cli.js",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.5.4"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "dev",
+    "orchestration",
+    "doctor",
+    "diagnostics",
+    "localhost",
+    "monorepo",
+    "tasks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/busyburgerr/p3k.git",
+    "directory": "cli"
+  },
+  "bugs": {
+    "url": "https://github.com/busyburgerr/p3k/issues"
+  },
+  "homepage": "https://github.com/busyburgerr/p3k#readme",
+  "publishConfig": {
+    "access": "public"
+  }
+}
