@@ -187,6 +187,29 @@ export class Supervisor {
     return spec.name
   }
 
+  /** Запуск команды оболочкой в каталоге проекта. true — код выхода 0. */
+  private shellSucceeds(command: string, spec: ProcessSpec): Promise<boolean> {
+    return new Promise((resolve) => {
+      const child = spawn(command, {
+        cwd: spec.cwd ? join(this.config.root, spec.cwd) : this.config.root,
+        shell: true,
+        stdio: 'ignore',
+      })
+      const timer = setTimeout(() => {
+        child.kill()
+        resolve(false)
+      }, HTTP_TIMEOUT)
+      child.on('exit', (code) => {
+        clearTimeout(timer)
+        resolve(code === 0)
+      })
+      child.on('error', () => {
+        clearTimeout(timer)
+        resolve(false)
+      })
+    })
+  }
+
   private async isReady(ready: Ready, rec: Running): Promise<boolean> {
     if ('delay' in ready) {
       await sleep(ready.delay)
@@ -196,11 +219,9 @@ export class Supervisor {
 
     if ('exec' in ready) {
       // Единственный способ спросить саму службу, готова ли она: порт она может
-      // открыть задолго до этого. Оболочка нужна, чтобы работали конвейеры.
-      const [file, ...args] = ready.exec.split(/\s+/)
-      if (!file) return false
-      const res = await exec(file, args, HTTP_TIMEOUT)
-      return res.ok
+      // открыть задолго до этого. Через оболочку и в каталоге проекта — иначе
+      // рассыплются кавычки и не сработают конвейеры вида `... | grep ...`.
+      return this.shellSucceeds(ready.exec, rec.spec)
     }
 
     if ('http' in ready) {
@@ -234,17 +255,63 @@ export class Supervisor {
     }
   }
 
+  /**
+   * Команда остановки: единственный способ убрать то, что переживает процесс.
+   *
+   * Выполняется через оболочку и в каталоге проекта — ровно как основная
+   * команда. Разбивать строку по пробелам нельзя: кавычки и пути с пробелами
+   * от такого разбора рассыпаются.
+   */
+  private async runStop(spec: ProcessSpec): Promise<void> {
+    if (!spec.stop) return
+    this.log.system(`${spec.name}: ${spec.stop}`)
+
+    await new Promise<void>((resolve) => {
+      const child = spawn(spec.stop as string, {
+        cwd: spec.cwd ? join(this.config.root, spec.cwd) : this.config.root,
+        shell: true,
+        stdio: ['ignore', 'pipe', 'pipe'],
+      })
+      const onData = (b: Buffer) => this.log.chunk(spec.name, b.toString())
+      child.stdout?.on('data', onData)
+      child.stderr?.on('data', onData)
+
+      const timer = setTimeout(() => {
+        child.kill()
+        this.log.system(`${spec.name}: команда остановки не уложилась в ${STOP_COMMAND_TIMEOUT / 1000}с`, 'warn')
+        resolve()
+      }, STOP_COMMAND_TIMEOUT)
+
+      const done = () => {
+        clearTimeout(timer)
+        resolve()
+      }
+      child.on('exit', done)
+      child.on('error', (e) => {
+        this.log.system(`${spec.name}: остановка не запустилась — ${e.message}`, 'warn')
+        done()
+      })
+    })
+  }
+
   private async stopAll(): Promise<void> {
     const order = shutdownOrder(this.config.processes)
     for (const spec of order) {
       const rec = this.running.get(spec.name)
-      if (!rec || rec.exited) continue
+      if (!rec) continue
+
+      if (rec.exited) {
+        // Процесс завершился, но мог оставить за собой внешнее состояние:
+        // `docker compose up -d` выходит сразу, а контейнеры продолжают жить.
+        // Поэтому команду остановки выполняем и для уже вышедших.
+        await this.runStop(spec)
+        continue
+      }
+
       rec.stopping = true
 
       if (spec.stop) {
-        this.log.system(`${spec.name}: ${spec.stop}`)
-        const [file, ...args] = spec.stop.split(/\s+/)
-        if (file) await exec(file, args, STOP_COMMAND_TIMEOUT)
+        await this.runStop(spec)
         if (await this.waitExit(rec, 1500)) continue
       }
 

@@ -13,6 +13,7 @@ import DocsSection from '@/components/DocsSection'
 import ConsoleBridge from '@/components/ConsoleBridge'
 import DoctorSection from '@/components/DoctorSection'
 import DoctorPage from '@/components/DoctorPage'
+import RecipesPage from '@/components/RecipesPage'
 import SecuritySection from '@/components/SecuritySection'
 import StartSection from '@/components/StartSection'
 import ProofSection from '@/components/ProofSection'
@@ -24,7 +25,7 @@ export default defineComponent({
   name: 'App',
   setup() {
     const { theme, toggle } = useTheme()
-    const { route } = useHashRoute(['docs', 'doctor'])
+    const { route } = useHashRoute(['docs', 'doctor', 'recipes'])
     /** Наблюдатель за скроллом на всю страницу: секции подключаются к нему сами. */
     provideReveal()
 
@@ -33,6 +34,8 @@ export default defineComponent({
         <SiteHeader route={route.value} theme={theme.value} onToggleTheme={toggle} />
         {route.value === 'doctor' ? (
           <DoctorPage />
+        ) : route.value === 'recipes' ? (
+          <RecipesPage />
         ) : route.value === 'docs' ? (
           <>
             <TemplatesSection />

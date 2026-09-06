@@ -3,6 +3,7 @@ import { docsHref, homeHref, href } from '@/composables/useHashRoute'
 
 const links = [
   { href: href('doctor'), label: 'DOCTOR' },
+  { href: href('recipes'), label: 'РЕЦЕПТЫ' },
   { href: homeHref('flow'), label: 'КОМАНДЫ' },
   { href: homeHref('compare'), label: 'СРАВНЕНИЕ' },
   { href: homeHref('security'), label: 'УСТРОЙСТВО' },
