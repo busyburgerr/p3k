@@ -45,11 +45,11 @@ export default defineComponent({
           <>
             <HeroSection />
             <CompatStrip />
-            <DoctorSection />
             <FlowSection />
             <CompareSection />
             <ConfigSection />
             <ConsoleBridge />
+            <DoctorSection />
             <SecuritySection />
             <StartSection />
             <ProofSection />

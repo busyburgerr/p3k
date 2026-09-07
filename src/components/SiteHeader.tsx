@@ -61,7 +61,7 @@ export default defineComponent({
               <span style="font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;line-height:1;letter-spacing:-.03em">:3000</span>
             </button>
             <div style="font-size:10px;letter-spacing:.16em;color:var(--muted);border:1px solid var(--line);border-radius:2px;padding:3px 6px">
-              {props.route === '' ? 'V0.1 · РАННЯЯ' : props.route.toUpperCase()}
+              {props.route === '' ? 'V0.2 · РАННЯЯ' : props.route.toUpperCase()}
             </div>
           </div>
 

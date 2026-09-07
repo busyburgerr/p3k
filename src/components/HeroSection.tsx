@@ -4,7 +4,7 @@ import InstallButton from './InstallButton'
 
 /** Всё, что здесь стоит, можно проверить в исходниках CLI. */
 const stats = [
-  { v: '4', l: 'КОМАНДЫ' },
+  { v: '6', l: 'КОМАНД' },
   { v: '0', l: 'ЗАВИСИМОСТЕЙ' },
   { v: '18+', l: 'NODE' },
 ]
@@ -22,19 +22,20 @@ export default defineComponent({
           <div>
             <div style="display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.18em;color:var(--muted);margin-bottom:28px">
               <span style="width:6px;height:6px;border-radius:50%;background:var(--accent)" />
-              ПОЧЕМУ LOCALHOST ПУСТОЙ
+              ОТ ПУСТОЙ ПАПКИ ДО ПРОДАКШЕНА
             </div>
             <h1 style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(40px,6.4vw,86px);line-height:.94;letter-spacing:-.035em;margin:0 0 24px">
-              Сервер сказал<br />«ready».<br />Страница пустая.
+              Один файл —<br />от первой<br />строки до VPS.
             </h1>
             <p style="font-size:clamp(14px,1.2vw,16px);line-height:1.65;color:var(--muted);max-width:46ch;margin:0 0 36px;text-wrap:pretty">
-              <span style="color:var(--ink)">doctor</span> находит причину за секунду и печатает команду, которая её
-              чинит. Тот же инструмент поднимает окружение по одному конфигу и прогоняет проверки до пуша — но
-              начните с этого. Без сервера, аккаунта и подписки.
+              <span style="color:var(--ink)">add</span> описывает базу один раз — и для ноутбука, и для сервера.
+              <span style="color:var(--ink)"> dev</span> поднимает это локально,
+              <span style="color:var(--ink)"> ship</span> выкатывает на ваш VPS: выпуск рядом с работающим, проверка
+              здоровья, откат за секунду. Ваш сервер, ваш SSH — ни аккаунта, ни подписки.
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:44px">
               <InstallButton />
-              <a href="#doctor" class="pill" style="padding:14px 22px;font-size:13px">Показать пример →</a>
+              <a href="#flow" class="pill" style="padding:14px 22px;font-size:13px">Как это устроено →</a>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)">
               {stats.map((s) => (

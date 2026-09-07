@@ -5,7 +5,7 @@ import Section from './Section'
 export default defineComponent({
   name: 'FlowSection',
   setup: () => () => (
-    <Section id="flow" title="Четыре шага, одна утилита" kicker="01 — 04">
+    <Section id="flow" title="Пять шагов, одна утилита" kicker="01 — 05">
       {{
         default: ({ shown }: { shown?: string }) => (
           <div class="cols">

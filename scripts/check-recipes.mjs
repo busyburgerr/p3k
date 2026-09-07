@@ -14,11 +14,14 @@ import { pathToFileURL } from 'node:url'
 
 const load = (rel) => import(pathToFileURL(resolve(rel)).href)
 
-let loadConfig, loadChecks, startupWaves
+let loadConfig, loadChecks, startupWaves, parseDeploy, planCompose, readResources
 try {
   ;({ loadConfig } = await load('cli/dist/dev/config.js'))
   ;({ loadChecks } = await load('cli/dist/check/config.js'))
   ;({ startupWaves } = await load('cli/dist/dev/graph.js'))
+  ;({ parseDeploy } = await load('cli/dist/ship/config.js'))
+  ;({ planCompose } = await load('cli/dist/ship/compose.js'))
+  ;({ readResources } = await load('cli/dist/add/plan.js'))
 } catch {
   console.error('нужна сборка CLI: cd cli && npm run build')
   process.exit(1)
@@ -59,6 +62,14 @@ for (const recipe of recipes) {
     }
     if (parsed.checks) {
       parts.push(`${loadChecks(root, file).gates.length} проверок`)
+    }
+    if (parsed.resources) {
+      const compose = planCompose(readResources(parsed), 'recipe')
+      parts.push(compose ? `${compose.services.length} служб в проде` : 'ресурсы только для разработки')
+    }
+    if (parsed.deploy) {
+      const deploy = parseDeploy(parsed.deploy, `${file} → deploy`)
+      parts.push(`выкатка на ${deploy.host ?? 'эту машину'}`)
     }
     console.log(`  ✓ ${recipe.id.padEnd(12)} ${parts.join(' · ')}`)
   } catch (e) {

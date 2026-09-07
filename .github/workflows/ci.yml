@@ -30,8 +30,14 @@ jobs:
       # Дым: команды должны хотя бы запускаться на каждой платформе.
       - run: node dist/cli.js --help
       - run: node dist/cli.js init smoke --template static --no-git
+      - run: node dist/cli.js add --list
+      - run: node dist/cli.js ship --help
       - run: node dist/cli.js check smoke --list
       - run: node dist/cli.js doctor smoke
+      # Правку конфига прогоняем вхолостую: --dry-run печатает тот же отчёт,
+      # но ничего не пишет, поэтому шаг ничего за собой не оставляет.
+      - run: node ../dist/cli.js add postgres --dry-run
+        working-directory: cli/smoke
 
   site:
     name: Сайт

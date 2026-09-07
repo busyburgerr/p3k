@@ -1,7 +1,7 @@
 {
   "name": "@busyburger/p3k",
-  "version": "0.1.1",
-  "description": "CLI для локального окружения: dev поднимает проект, doctor объясняет, почему он не поднялся",
+  "version": "0.2.0",
+  "description": "CLI от пустой папки до продакшена: add описывает ресурсы, dev поднимает локально, ship выкатывает на VPS с откатом",
   "type": "module",
   "bin": {
     "p3k": "dist/cli.js"
@@ -28,13 +28,17 @@
   "license": "MIT",
   "keywords": [
     "cli",
+    "deploy",
+    "deployment",
+    "vps",
+    "ssh",
     "dev",
     "orchestration",
+    "docker",
+    "compose",
+    "rollback",
     "doctor",
-    "diagnostics",
-    "localhost",
-    "monorepo",
-    "tasks"
+    "monorepo"
   ],
   "repository": {
     "type": "git",

@@ -1,6 +1,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
-import { join, dirname, resolve } from 'node:path'
+import { join, dirname, resolve, basename } from 'node:path'
 import type { ProjectPort } from '../types.js'
+import { slugify } from '../init/templates.js'
 
 export function readJson(file: string): Record<string, unknown> | null {
   try {
@@ -19,6 +20,18 @@ export function findRoot(start: string): string {
     if (up === dir) return resolve(start)
     dir = up
   }
+}
+
+/**
+ * Имя проекта: из package.json, иначе из имени каталога.
+ *
+ * Идёт в имена контейнеров, базы и compose-проекта, поэтому приводится к тому
+ * же виду, что и при init: иначе локальное и продакшен-окружения назвали бы
+ * одно и то же по-разному.
+ */
+export function projectName(root: string): string {
+  const pkg = readJson(join(root, 'package.json'))
+  return slugify(typeof pkg?.name === 'string' ? pkg.name : basename(root))
 }
 
 const CONFIG_NAMES = /^(vite|next|nuxt|astro|svelte|webpack|vue)\.config\.[cm]?[jt]s$/

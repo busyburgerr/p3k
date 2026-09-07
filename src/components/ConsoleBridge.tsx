@@ -2,13 +2,14 @@ import { defineComponent } from 'vue'
 import { docsHref } from '@/composables/useHashRoute'
 import { docs } from '@/data.docs'
 import { templates } from '@/data.templates'
+import { plural } from '@/plural'
 import Section from './Section'
 
 /** Счётчики берём из самих данных — иначе они разъедутся с содержимым. */
 const rows = [
   { href: docsHref('templates'), label: 'Шаблоны проектов', meta: String(templates.length), accent: false },
-  { href: docsHref('doc-config'), label: 'Поля конфига', meta: 'processes и checks', accent: false },
-  { href: docsHref('doc-dev'), label: 'Справочник команд', meta: '4', accent: false },
+  { href: docsHref('doc-ship'), label: 'Выкатка на свой сервер', meta: 'выпуски и откат', accent: false },
+  { href: docsHref('doc-dev'), label: 'Справочник команд', meta: '6', accent: false },
   { href: docsHref('doc-limits'), label: 'Чего пока нет', meta: 'список', accent: true },
 ]
 
@@ -25,7 +26,7 @@ export default defineComponent({
             <div>
               <div class="kicker" style="letter-spacing:.18em;margin-bottom:16px">ДОКУМЕНТАЦИЯ</div>
               <h2 class="h2" style="font-size:clamp(24px,3vw,38px);margin-bottom:14px;max-width:26ch">
-                {docs.length} раздела: команды, конфиг и границы
+                {plural(docs.length, 'раздел', 'раздела', 'разделов')}: команды, ресурсы, выкатка и границы
               </h2>
               <p style="font-size:13px;line-height:1.75;color:var(--muted);max-width:52ch;margin:0 0 24px;text-wrap:pretty">
                 Описано только то, что действительно работает. Отдельный раздел перечисляет, чего в инструменте

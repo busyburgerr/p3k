@@ -24,7 +24,7 @@ export default defineComponent({
         <div style="display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:center;align-items:center;margin-top:36px;padding-top:26px;border-top:1px solid var(--line);font-size:11px;letter-spacing:.12em;color:var(--muted)">
           <span style="display:flex;align-items:center;gap:8px">
             <span style="width:7px;height:7px;border-radius:50%;background:var(--accent)" />
-            ВЕРСИЯ 0.1 · РАННЯЯ РАЗРАБОТКА
+            ВЕРСИЯ 0.2 · РАННЯЯ РАЗРАБОТКА
           </span>
           <span>INIT · DEV · CHECK · DOCTOR</span>
           <a href="#/docs#doc-limits">ЧЕГО ПОКА НЕТ →</a>
