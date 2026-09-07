@@ -95,6 +95,24 @@ class Report {
 
 const since = (t: number) => `${((Date.now() - t) / 1000).toFixed(1)} с`
 
+const DEPLOY_STUB = `
+  Добавьте в p3k.json примерно такое и поправьте под себя:
+
+  "deploy": {
+    "host": "root@ваш-сервер",
+    "path": "/srv/приложение",
+    "build": "npm run build",
+    "upload": ["dist", "package.json", "package-lock.json"],
+    "release": "npm ci --omit=dev",
+    "restart": "systemctl restart приложение",
+    "health": "https://ваш-домен/health"
+  }
+
+  Обязательны только path и upload. Без host целью будет эта же машина —
+  так удобно посмотреть, что получится, ничего не трогая на сервере.
+`
+
+
 /** Последние строки чужого вывода — их обычно достаточно, чтобы понять причину. */
 function tail(text: string, lines = 6): string {
   const kept = text.trim().split('\n').slice(-lines)
@@ -282,6 +300,9 @@ export async function runShip(argv: string[], io: ShipIo = CONSOLE): Promise<num
     deploy = loadDeploy(file)
   } catch (e) {
     r.fail(`ship: ${e instanceof ConfigError ? e.message : String(e)}\n`)
+    // Заготовку печатаем, а не дописываем в конфиг: адрес сервера и путь на нём
+    // знает только человек, а конфиг с выдуманным хостом хуже, чем никакого.
+    if (e instanceof ConfigError && /нет секции deploy/.test(e.message)) r.fail(DEPLOY_STUB)
     return 2
   }
 

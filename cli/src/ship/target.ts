@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process'
 import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readlinkSync, renameSync, rmSync, rmdirSync, symlinkSync, unlinkSync } from 'node:fs'
-import { join as joinNative, resolve } from 'node:path'
+import { dirname, join as joinNative, resolve } from 'node:path'
 import { shell, type ExecResult } from '../util/exec.js'
 
 /**
@@ -128,6 +128,21 @@ export class SshTarget implements Target {
   }
 }
 
+/**
+ * Ссылка на месте — даже если она никуда не ведёт.
+ *
+ * existsSync идёт по ссылке и на повисшей возвращает false, после чего
+ * переименование упало бы с «файл уже существует».
+ */
+function linkPresent(path: string): boolean {
+  try {
+    lstatSync(path)
+    return true
+  } catch {
+    return false
+  }
+}
+
 /** Снять ссылку, не тронув то, на что она указывает. */
 function unlink(path: string): void {
   try {
@@ -166,20 +181,24 @@ export class LocalTarget implements Target {
     for (const p of paths) {
       const from = resolve(root, p)
       if (!existsSync(from)) throw new Error(`нечего отправлять: в проекте нет "${p}"`)
-      cpSync(from, joinNative(dest, p), { recursive: true })
+      const to = joinNative(dest, p)
+      // Путь может быть вложенным (src/server.mjs): каталог под него нужно
+      // создать самим, копирование одиночного файла этого не делает.
+      mkdirSync(dirname(to), { recursive: true })
+      cpSync(from, to, { recursive: true })
     }
   }
 
   async link(target: string, link: string): Promise<void> {
     const tmp = `${link}.new`
-    if (existsSync(tmp)) unlink(tmp)
+    if (linkPresent(tmp)) unlink(tmp)
     // junction вместо симлинка: на Windows обычная символическая ссылка
     // требует прав администратора, а связь каталогов — нет.
     symlinkSync(target, tmp, process.platform === 'win32' ? 'junction' : 'dir')
     try {
       renameSync(tmp, link)
     } catch {
-      if (existsSync(link)) unlink(link)
+      if (linkPresent(link)) unlink(link)
       renameSync(tmp, link)
     }
   }
