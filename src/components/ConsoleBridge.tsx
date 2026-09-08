@@ -10,6 +10,7 @@ const rows = [
   { href: docsHref('templates'), label: 'Шаблоны проектов', meta: String(templates.length), accent: false },
   { href: docsHref('doc-ship'), label: 'Выкатка на свой сервер', meta: 'выпуски и откат', accent: false },
   { href: docsHref('doc-dev'), label: 'Справочник команд', meta: '6', accent: false },
+  { href: docsHref('doc-go'), label: 'Библиотека для Go', meta: 'вторая реализация', accent: false },
   { href: docsHref('doc-limits'), label: 'Чего пока нет', meta: 'список', accent: true },
 ]
 

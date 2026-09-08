@@ -10,6 +10,7 @@ import CompareSection from '@/components/CompareSection'
 import ConfigSection from '@/components/ConfigSection'
 import TemplatesSection from '@/components/TemplatesSection'
 import DocsSection from '@/components/DocsSection'
+import GoSection from '@/components/GoSection'
 import ConsoleBridge from '@/components/ConsoleBridge'
 import DoctorSection from '@/components/DoctorSection'
 import DoctorPage from '@/components/DoctorPage'
@@ -48,6 +49,7 @@ export default defineComponent({
             <FlowSection />
             <CompareSection />
             <ConfigSection />
+            <GoSection />
             <ConsoleBridge />
             <DoctorSection />
             <SecuritySection />
