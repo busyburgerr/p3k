@@ -48,6 +48,31 @@ jobs:
       - run: node ../dist/cli.js add postgres --dry-run --force
         working-directory: cli/smoke
 
+  go:
+    name: Go · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Три ОС нужны не для галочки: снятие дерева процессов устроено
+        # по-разному — объект задания на Windows, группа процессов на Unix.
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: go
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          # Зависимостей нет, а значит нет и go.sum, на который смотрит кэш.
+          cache: false
+      # gofmt молчит, когда всё отформатировано; здесь его молчание и проверяем.
+      - run: test -z "$(gofmt -l .)"
+        shell: bash
+      - run: go vet ./...
+      - run: go test ./...
+
   site:
     name: Сайт
     runs-on: ubuntu-latest
