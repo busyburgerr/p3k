@@ -476,6 +476,12 @@ func (e *Env) stopTree(ctx context.Context, st *procState) error {
 		}
 	}
 
+	// Вежливая просьба могла сработать мгновенно. Снимать после этого нечего,
+	// и пытаться — значит стрелять по опустевшей группе.
+	if st.hasExited() {
+		return nil
+	}
+
 	if err := procgroup.Kill(st.cmd); err != nil {
 		return fmt.Errorf("%s: не сняли дерево процессов — %w", st.spec.Name, err)
 	}
